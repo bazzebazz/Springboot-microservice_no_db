@@ -1,8 +1,15 @@
 package com.donjavidev.reservation.dto;
 
+import com.donjavidev.reservation.validation.CityFormatConstraint;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class SegmentDto {
+
+    @CityFormatConstraint
     private String origin;
 
+    @CityFormatConstraint
     private String destination;
 
     private String departure;

@@ -1,16 +1,23 @@
 package com.donjavidev.reservation.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+
 import java.time.LocalDate;
 
 public class PassengerDto {
 
+    @NotBlank(message = "firstName is required")
     private String firstName;
+
+    @NotBlank(message = "lastName is required")
     private String lastName;
 
     private String documentNumber;
 
     private String documentType;
 
+    @Past(message = "birthday need to be a date in the past")
     private LocalDate birthday;
 
     public String getFirstName() {

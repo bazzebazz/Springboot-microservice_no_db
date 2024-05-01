@@ -1,13 +1,20 @@
 package com.donjavidev.reservation.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+
 import java.time.LocalDate;
 import java.util.List;
 
 public class ReservationDto {
+
     private Long id;
 
+    @Valid
+    @NotEmpty(message = "You need at least one passenger")
     private List<PassengerDto> passengers;
 
+    @Valid
     private ItineraryDto itinerary;
 
     private LocalDate creationDate;
