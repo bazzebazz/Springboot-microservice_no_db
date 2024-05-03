@@ -1,6 +1,6 @@
 package com.donjavidev.reservation.controller;
 
-import com.donjavidev.reservation.dto.PassengerDto;
+import com.donjavidev.reservation.controller.resource.ReservationResource;
 import com.donjavidev.reservation.dto.ReservationDto;
 import com.donjavidev.reservation.enums.APIError;
 import com.donjavidev.reservation.exception.ReservationException;
@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Validated
 @RestController
 @RequestMapping("/reservation")
-public class ReservationController {
+@Validated
+public class ReservationController implements ReservationResource {
 
     private ReservationService service;
 
@@ -41,6 +41,11 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<ReservationDto> saveReservation(ReservationDto reservation) {
+        return null;
+    }
+
     @PostMapping
     @RateLimiter(name = "post-reservation", fallbackMethod = "fallbackPost")
     public ResponseEntity<ReservationDto> save(@RequestBody @Valid ReservationDto reservation) {
@@ -55,7 +60,7 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ReservationDto> deleteReservation(@Min(1) @PathVariable Long id) {
+    public ResponseEntity<Void> deleteReservation(@Min(1) @PathVariable Long id) {
         service.deleteReservation(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
