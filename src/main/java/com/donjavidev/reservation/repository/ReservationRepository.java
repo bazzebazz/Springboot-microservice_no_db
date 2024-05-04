@@ -51,19 +51,20 @@ public class ReservationRepository {
         reservations.add(reservation);
     }
 
-    public List<Reservation> getReservations() { return reservations; }
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
 
     public Optional<Reservation> getReservationById(Long id) {
-        List<Reservation> result = reservations.stream()
-                .filter(reservation -> Objects.equals(reservation.getId(), id))
+        List<Reservation> result = reservations.stream().filter(reservation -> Objects.equals(reservation.getId(), id))
                 .toList();
 
         Reservation reservation = !result.isEmpty() ? result.get(0) : null;
         return Optional.ofNullable(reservation);
     }
 
-    public  Reservation saveReservation(Reservation reservation) {
-        reservation.setId( (long) (reservations.size() + 1 ) );
+    public Reservation saveReservation(Reservation reservation) {
+        reservation.setId((long) (reservations.size() + 1));
         reservations.add(reservation);
         return reservation;
     }
@@ -78,7 +79,7 @@ public class ReservationRepository {
     }
 
     public void deleteReservation(Long id) {
-        List<Reservation> result = reservations.stream().filter( reservation -> reservation.getId().equals(id) ).toList();
+        List<Reservation> result = reservations.stream().filter(reservation -> reservation.getId().equals(id)).toList();
 
         reservations.remove(result.get(0));
     }

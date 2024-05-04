@@ -2,9 +2,7 @@ package com.donjavidev.reservation.connector.response;
 
 public class CityDto {
     private String name;
-
     private String code;
-
     private String timeZone;
 
     public String getName() {

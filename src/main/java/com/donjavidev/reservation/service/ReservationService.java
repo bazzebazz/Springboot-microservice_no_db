@@ -24,25 +24,22 @@ public class ReservationService {
     private CatalogConnector connector;
 
     @Autowired
-    public ReservationService(
-            ReservationRepository repository,
-            ConversionService conversionService,
-            CatalogConnector connector
-    ) {
+    public ReservationService(ReservationRepository repository, ConversionService conversionService,
+            CatalogConnector connector) {
         this.repository = repository;
         this.conversionService = conversionService;
         this.connector = connector;
     }
 
-    //*Get All Reservations
+    // *Get All Reservations
     public List<ReservationDto> getReservations() {
         return conversionService.convert(repository.getReservations(), List.class);
     }
 
-    //*GetReservationById
+    // *GetReservationById
     public ReservationDto getReservationById(Long id) {
         Optional<Reservation> result = repository.getReservationById(id);
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             throw new ReservationException(APIError.RESERVATION_NOT_FOUND);
         }
 
@@ -50,9 +47,9 @@ public class ReservationService {
 
     }
 
-    //*SaveReservation
+    // *SaveReservation
     public ReservationDto saveReservation(ReservationDto reservation) {
-        if(Objects.nonNull(reservation.getId())) {
+        if (Objects.nonNull(reservation.getId())) {
             throw new ReservationException(APIError.RESERVATION_WITH_SAME_ID);
         }
         checkCity(reservation);
@@ -63,9 +60,9 @@ public class ReservationService {
 
     }
 
-    //*UpdateReservation
+    // *UpdateReservation
     public ReservationDto updateReservation(Long id, ReservationDto reservation) {
-        if(getReservationById(id) == null) {
+        if (getReservationById(id) == null) {
             throw new ReservationException(APIError.RESERVATION_NOT_FOUND);
         }
 
@@ -77,21 +74,21 @@ public class ReservationService {
 
     }
 
-    //*Delete A Reservation
+    // *Delete A Reservation
     public void deleteReservation(Long id) {
-        if(getReservationById(id) == null) {
+        if (getReservationById(id) == null) {
             throw new ReservationException(APIError.RESERVATION_NOT_FOUND);
         }
         repository.deleteReservation(id);
     }
 
-    //*Check City Code
+    // *Check City Code
     private void checkCity(ReservationDto reservationDto) {
-        for(SegmentDto segmentDto : reservationDto.getItinerary().getSegment()) {
+        for (SegmentDto segmentDto : reservationDto.getItinerary().getSegment()) {
             CityDto origin = connector.getCity(segmentDto.getOrigin());
             CityDto destination = connector.getCity(segmentDto.getDestination());
 
-            if(origin == null || destination == null) {
+            if (origin == null || destination == null) {
                 throw new ReservationException(APIError.VALIDATION_ERROR);
             } else {
                 System.out.println(origin.getName());

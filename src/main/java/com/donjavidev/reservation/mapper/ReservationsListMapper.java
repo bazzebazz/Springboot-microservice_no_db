@@ -10,7 +10,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ReservationsListMapper extends Converter<List<Reservation>, List<ReservationDto>> {
 
-
     @Override
     List<ReservationDto> convert(List<Reservation> source);
 }

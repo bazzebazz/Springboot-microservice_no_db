@@ -9,6 +9,8 @@ import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,51 +26,55 @@ import java.util.Objects;
 @Validated
 public class ReservationController implements ReservationResource {
 
-    private ReservationService service;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReservationController.class);
+    private final ReservationService service;
 
     @Autowired
-    public ReservationController(ReservationService service) { this.service = service; }
+    public ReservationController(ReservationService service) {
+        this.service = service;
+    }
 
     @GetMapping
     public ResponseEntity<List<ReservationDto>> getReservations() {
+        LOGGER.info("Obtain all the reservations");
         List<ReservationDto> response = service.getReservations();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public  ResponseEntity<ReservationDto> getReservationById(@PathVariable Long id) {
+    public ResponseEntity<ReservationDto> getReservationById(@Min(1) @PathVariable Long id) {
+        LOGGER.info("Obtain information from a reservation with {}", id);
         ReservationDto response = service.getReservationById(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Override
-    public ResponseEntity<ReservationDto> saveReservation(ReservationDto reservation) {
-        return null;
-    }
-
     @PostMapping
     @RateLimiter(name = "post-reservation", fallbackMethod = "fallbackPost")
-    public ResponseEntity<ReservationDto> save(@RequestBody @Valid ReservationDto reservation) {
+    public ResponseEntity<ReservationDto> saveReservation(@RequestBody @Valid ReservationDto reservation) {
+        LOGGER.info("Saving new reservation");
         ReservationDto response = service.saveReservation(reservation);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReservationDto> updateReservation(@Min(1) @PathVariable Long id, @Valid @RequestBody ReservationDto reservation) {
+    public ResponseEntity<ReservationDto> updateReservation(@Min(1) @PathVariable Long id,
+            @RequestBody @Valid ReservationDto reservation) {
+        LOGGER.info("Updating a reservation with {}", id);
         ReservationDto response = service.updateReservation(id, reservation);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteReservation(@Min(1) @PathVariable Long id) {
+        LOGGER.info("Deleting a reservation with {}", id);
         service.deleteReservation(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private ResponseEntity<ReservationDto> fallbackPost(ReservationDto reservation, RequestNotPermitted ex) {
-        System.out.println("calling to fallbackPost");
+        LOGGER.debug("calling to fallbackPost");
 
         throw new ReservationException(APIError.EXCEED_NUMBER_OPERATIONS);
     }
-
 }
